@@ -5,3 +5,4 @@ export function lerp(current, target, speed = 0.1, limit = 0.001) {
   }
   return change;
 }
+export default lerp;
