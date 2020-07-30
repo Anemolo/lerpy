@@ -1,0 +1,17 @@
+{
+  "name": "lerpy",
+  "version": "1.0.0",
+  "description": "Lerp with snapping",
+  "author": "Daniel Velasquez",
+  "license": "MIT",
+  "devDependencies": {
+    "microbundle": "^0.12.3"
+  },
+  "scripts": {
+    "build": "microbundle"
+  },
+  "main": "./dist/index.umd.js",
+  "unpkg": "dist/index.umd.js",
+  "module": "./dist/index.modern.js",
+  "source": "./index.js"
+}
