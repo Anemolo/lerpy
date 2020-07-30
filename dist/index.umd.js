@@ -1,2 +1,2 @@
-!function(e,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports):"function"==typeof define&&define.amd?define(["exports"],n):n((e=e||self).lerpy={})}(this,function(e){e.lerp=function(e,n,o,t){void 0===o&&(o=.1),void 0===t&&(t=.001);var f=(n-e)*o;return Math.abs(f)<t&&(f=n-e),f}});
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?t(exports):"function"==typeof define&&define.amd?define(["exports"],t):t((e=e||self).lerpy={})}(this,function(e){function t(e,t,n,o){void 0===n&&(n=.1),void 0===o&&(o=.001);var f=(t-e)*n;return Math.abs(f)<o&&(f=t-e),f}e.default=t,e.lerp=t});
 //# sourceMappingURL=index.umd.js.map
