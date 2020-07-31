@@ -1,4 +1,4 @@
-A simple Linear interpolation function that **returns the change instead of the final value**. And it snaps when lower than threshold.
+A simple Linear interpolation function that **returns the change instead of the final value** and snaps it when lower than threshold.
 
 # Usage
 
