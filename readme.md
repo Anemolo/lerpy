@@ -9,7 +9,7 @@ let change = lerp(current, target, alpha, snapThreshold);
 current += change;
 ```
 
-# Why?
+# Why? A note
 
 1. With the change insted of the final value, you can decide to do or not do something ( for performance reasons ).
 2. I always want snapping of the value at some point.
@@ -18,81 +18,75 @@ You can do these two things with the regular lerp. But with the change they beco
 
 This is what they call in the _biz_ "Inversion of control".
 
-## With by big-brain Lerpy
+---
 
-1. **Only update if not 0**
+**With regular lerp.**
+
+Normally, the regular lerp would give you the lerped final value, and you would set that to your variable. Like so:
 
 ```javascript
-let speedChange = lerp(speed, 0, 0.1, 0.001);
+import lerp from "lerp";
+let speed = 1;
+let targetSpeed = 0;
+speed = lerp(speed, targetSpeed, 0.1);
+
+someClass.setSpeed(speed);
+```
+
+#### Issues
+
+1. **Possible bad performance**: Always calling `.setSpeed` even if it's not updated :( What if that's.
+   - We could add `speed !== targetSpeed` to update whenever it's not equal to the target. But that would mean the last tick, whenever it's equal, won't ever happen. - Also, doing the **"update when not equal to target"** is confusing to think about -> `speed !== targetSpeed` - It's better and easier to wrap your head around **"update when it changes"** -> `Math.abs(speedChange) !== 0`
+2. **No snapping**: Speed won't ever reach it's target `0.`
+
+To fix these issues, you end up fighting against the lerp by substracting the speed again. What it gives you, it's not what you really want.
+
+```javascript
+import lerp from "lerp";
+let speed = 1;
+let speedChange = lerp(speed, 0, 0.1) - speed;
+speed += speedChange;
+speed = Math.round(speed / 1000) * 1000;
 
 if (Math.abs(speedChange) !== 0) {
-  someClass.setSpeed(speed);
+	someClass.setSpeed(speed);
+}
+```
+
+Things you need to rememeber:
+
+1. **Get the change by substract the last value to the new**
+2. **Add the change back to the last value**
+3. **Do some weird decimal round.**
+4. **Change check**
+
+## With my cute lerpy
+
+You only have to thing about a few things.
+
+1. **Add the change back to the last value**
+2. **Change check**
+
+```javascript
+let speed = 0;
+let speedChange = lerp(speed, 0, 0.1, 0.001);
+speed += speedChange;
+
+if (Math.abs(speedChange) !== 0) {
+	someClass.setSpeed(speed);
 }
 ```
 
 Or, if you wanted it even shorter: ( Using boolean cohersion )
 
 ```javascript
+let speed = 0;
 let speedChange = lerp(speed, 0, 0.1, 0.001);
+speed += speedChange;
 
 if (!speedChange) {
-  someClass.setSpeed(speed);
+	someClass.setSpeed(speed);
 }
 ```
 
----
-
-## Using that off-brand lerp you bought in a garage sale
-
-```javascript
-import lerp from "lerp"
-
-let speed += lerp(speed, 0., 0.1);
-someClass.setSpeed(speed);
-```
-
-**Issues**
-
-1. **Possible bad performance**: Always calling `.setSpeed` even if it's not updated :( What if that's
-2. **No snapping**: Speed won't ever reach `0.`
-
-## What I end up doing to solve the issues.
-
-1. **Get the change.**: Substract the current speed from the new speed to get the change.
-2. **Snap if lower**: Snap it if the change it's too small
-3. **Only update if not 0**
-
-```javascript
-let speedChange = lerp(speed, 0, 0.1) - speed;
-if (speedChange < 0.01) {
-  speedChange = 0 - speed;
-}
-if (Math.abs(speedChange) !== 0) {
-  someClass.setSpeed(speed);
-}
-```
-
-**Issues**
-
-1. **All I want for christmas is the change**: But I have to work againts my lerp to get it.
-
-## An alternative solution.
-
-```javascript
-let targetSpeed = 0;
-let nextSpeed = lerp(speed, 0, 0.1);
-nextSpeed = Math.round(nextSpeed / 1000) * 1000;
-if (nextSpeed !== targetSpeed) {
-  someClass.setSpeed(speed);
-}
-```
-
-**Issues**
-
-1. **Snap with a big number**: The decimal place of the snap is not intuitive.
-2. **Only update if it's not the same as the target?**: The framing of this `if statement` makes it confusing. It makes you think about what that even means.
-   1. What's easier to think about?
-      1. Only update if it changes.
-      2. Only update if it's not the same as the target (???????????????)
-
-Thanks for comming to my TED talk.
+Thanks for comming to my ted Talk
